@@ -11,6 +11,7 @@ RUN curl -L -O https://dlsrc.getmonero.org/cli/$FILE
 RUN echo "$FILE_CHECKSUM $FILE" | sha256sum -c - 
 RUN mkdir -p extracted 
 RUN tar -zxvf $FILE -C /extracted 
+RUN find /extracted/ -type f -print0 | xargs -0 chmod a+x
 RUN find /extracted/ -type f -print0 | xargs -0 mv -t /usr/local/bin/
 RUN rm -rf extracted && rm $FILE 
 RUN apt-get -y autoremove \
@@ -24,12 +25,7 @@ RUN adduser --system --group --disabled-password monero && \
 	chown -R monero:monero /home/monero/.bitmonero && \
 	chown -R monero:monero /wallet
 
-# Contains the blockchain
 VOLUME /home/monero/.bitmonero
-
-# Generate your wallet via accessing the container and run:
-# cd /wallet
-# monero-wallet-cli
 VOLUME /wallet
 
 EXPOSE 18080
