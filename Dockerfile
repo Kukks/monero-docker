@@ -1,16 +1,16 @@
 # runtime stage
 FROM debian:stretch-slim
 
-ENV FILE=monero-linux-x64-v0.14.1.2.tar.bz2
-ENV FILE_CHECKSUM=a4d1ddb9a6f36fcb985a3c07101756f544a5c9f797edd0885dab4a9de27a6228
+ENV FILE=monero-linux-x64-v0.15.0.0.tar.bz2
+ENV FILE_CHECKSUM=53d9da55137f83b1e7571aef090b0784d9f04a980115b5c391455374729393f3
 RUN apt-get update \
-    && apt-get -y --no-install-recommends install gzip ca-certificates curl 
+    && apt-get -y --no-install-recommends install bzip2 ca-certificates curl 
 	
 RUN curl -L -O https://dlsrc.getmonero.org/cli/$FILE 
 
 RUN echo "$FILE_CHECKSUM $FILE" | sha256sum -c - 
 RUN mkdir -p extracted 
-RUN tar -zxvf $FILE -C /extracted 
+RUN tar -jxvf $FILE -C /extracted 
 RUN find /extracted/ -type f -print0 | xargs -0 chmod a+x
 RUN find /extracted/ -type f -print0 | xargs -0 mv -t /usr/local/bin/
 RUN rm -rf extracted && rm $FILE 
